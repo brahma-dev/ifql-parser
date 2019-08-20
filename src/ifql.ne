@@ -454,6 +454,9 @@ time_range ->
   | H {% d => dataType('hour') %}
   | M {% d => dataType('minute') %}
   | S {% d => dataType('second') %}
+  | M S {% d => dataType('millisecond') %}
+  | U {% d => dataType('microsecond') %}
+  | N S {% d => dataType('nanosecond') %}
 
 date_unit_internal ->
     M I C R O S E C O N D
