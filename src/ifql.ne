@@ -65,14 +65,15 @@ query_spec ->
     %}
 
 table_exp ->
-    from_clause (__ where_clause | null) (__ group_by_clause | null) (__ having_clause | null) (__ order_clause | null)  (__ fill_clause | null) {%
+    from_clause (__ where_clause | null) (__ group_by_clause | null) (__ having_clause | null) (__ order_clause | null)  (__ fill_clause | null) (__ limit_expr | null) {%
       d => ({
         type: 'from_table',
         from: d[0],
         where: (d[1] || [])[1],
         groupby: (d[2] || [])[1],
         having: (d[3] || [])[1],
-        order: (d[4] || [])[1]
+        order: (d[4] || [])[1],
+        limit: (d[6] || [])[1],
       })
     %}
 
@@ -406,6 +407,14 @@ interval_expr ->
       })
     %}
 
+limit_expr ->
+    LIMIT __ int {%
+      d => ({
+        type: 'limit',
+        value: d[2]
+      })
+    %}
+
 cast_statement ->
     CAST _ "(" _ expr __ AS __ data_type _ ")" {%
       d => ({
@@ -605,6 +614,7 @@ JOIN -> [Jj] [Oo] [Ii] [Nn]
 
 LEFT -> [Ll] [Ee] [Ff] [Tt] {% d => 'left' %}
 LIKE -> [Ll] [Ii] [Kk] [Ee]
+LIMIT -> [Ll] [Ii] [Mm] [Ii] [Tt]
 
 MOD -> [Mm] [Oo] [Dd]
 

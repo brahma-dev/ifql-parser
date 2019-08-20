@@ -215,14 +215,17 @@ var grammar = {
     {"name": "table_exp$subexpression$4", "symbols": []},
     {"name": "table_exp$subexpression$5", "symbols": ["__", "fill_clause"]},
     {"name": "table_exp$subexpression$5", "symbols": []},
-    {"name": "table_exp", "symbols": ["from_clause", "table_exp$subexpression$1", "table_exp$subexpression$2", "table_exp$subexpression$3", "table_exp$subexpression$4", "table_exp$subexpression$5"], "postprocess": 
+    {"name": "table_exp$subexpression$6", "symbols": ["__", "limit_expr"]},
+    {"name": "table_exp$subexpression$6", "symbols": []},
+    {"name": "table_exp", "symbols": ["from_clause", "table_exp$subexpression$1", "table_exp$subexpression$2", "table_exp$subexpression$3", "table_exp$subexpression$4", "table_exp$subexpression$5", "table_exp$subexpression$6"], "postprocess": 
         d => ({
           type: 'from_table',
           from: d[0],
           where: (d[1] || [])[1],
           groupby: (d[2] || [])[1],
           having: (d[3] || [])[1],
-          order: (d[4] || [])[1]
+          order: (d[4] || [])[1],
+          limit: (d[6] || [])[1],
         })
             },
     {"name": "all_distinct", "symbols": ["ALL"], "postprocess": d => ({type: 'all'})},
@@ -465,6 +468,12 @@ var grammar = {
           unit: d[4]
         })
             },
+    {"name": "limit_expr", "symbols": ["LIMIT", "__", "int"], "postprocess": 
+        d => ({
+          type: 'limit',
+          value: d[2]
+        })
+            },
     {"name": "cast_statement", "symbols": ["CAST", "_", {"literal":"("}, "_", "expr", "__", "AS", "__", "data_type", "_", {"literal":")"}], "postprocess": 
         d => ({
           type: 'cast',
@@ -646,6 +655,7 @@ var grammar = {
     {"name": "JOIN", "symbols": [/[Jj]/, /[Oo]/, /[Ii]/, /[Nn]/]},
     {"name": "LEFT", "symbols": [/[Ll]/, /[Ee]/, /[Ff]/, /[Tt]/], "postprocess": d => 'left'},
     {"name": "LIKE", "symbols": [/[Ll]/, /[Ii]/, /[Kk]/, /[Ee]/]},
+    {"name": "LIMIT", "symbols": [/[Ll]/, /[Ii]/, /[Mm]/, /[Ii]/, /[Tt]/]},
     {"name": "MOD", "symbols": [/[Mm]/, /[Oo]/, /[Dd]/]},
     {"name": "NOT", "symbols": [/[Nn]/, /[Oo]/, /[Tt]/]},
     {"name": "NULLX", "symbols": [/[Nn]/, /[Uu]/, /[Ll]/, /[Ll]/, /[Xx]/]},
